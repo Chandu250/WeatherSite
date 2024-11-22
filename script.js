@@ -6,65 +6,64 @@ let locationTimezone = document.querySelector(".location-timezone");
 let setIcon = document.querySelector(".icon");
 let maxTemperature = document.querySelector(".maxTemp");
 let minTemperature = document.querySelector(".minTemp");
-let windSpeed = document.querySelector(".windSpeed");
+let windSpeed = document.querySelector(".windSpeed")
 let weather = document.querySelector("#weather");
 
-// Check if geolocation is available
+
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(async position => {
         long = position.coords.longitude;
         lat = position.coords.latitude;
         const data = await getWeatherdata(lat, long);
 
-        // Initialize the map
+    
+        // To Draw a India map using leaflet
+        // Map related Code 
         var map = L.map('map').setView([20.9716, 80.5946], 5);
 
         L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=OdpemAaV0raJvYO6cUSS', {
             attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
         }).addTo(map);
 
+
+        // To show a marker on the india map with the name of the place
         var marker = L.marker([lat, long]).addTo(map);
         marker.bindPopup(data.name).openPopup();
+        
 
-        // Map click handler to update location and weather info
+        // to add a click handler on map
         map.on('click', async function(e) {
-            console.log("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng);
+            console.log("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
 
-            const data = await getWeatherdata(e.latlng.lat, e.latlng.lng);
+            // Calling the weather api with new lat long
+           const data = await getWeatherdata(e.latlng.lat, e.latlng.lng);
 
-            // Update the marker location
+           // Showing the marker at the clicked position with the city name(position name)
             marker.setLatLng([e.latlng.lat, e.latlng.lng]);
             marker.bindPopup(data.name).openPopup();
         });
+        
 
-    }, error => {
-        alert("Unable to retrieve your location. Please check your device's geolocation settings.");
-    });
+    })
 }
 
-// Fetch weather data from the API
-async function getWeatherdata(lat, long) {
-    const api = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&units=metric&appid=3GXftAhkI0Kp6mm8ehh0`;
+    
+async function getWeatherdata(lat,long) {
+        const api = https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&units=metric&appid=ddfaba4398b491fa4ef3e29a5e934c6e;
 
-    try {
         let response = await fetch(api);
-        if (!response.ok) {
-            throw new Error('Failed to fetch data');
-        }
         let data = await response.json();
+
         weatherDataHandler(data);
         return data;
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to fetch weather data.');
-    }
 }
 
-// Handle weather data and update the UI
 function weatherDataHandler(data) {
     const { temp } = data.main;
-    const { description, icon } = data.weather[0];
-    const { temp_max, temp_min } = data.main;
+    const { description } = data.weather[0];
+    const { icon } = data.weather[0];
+    const { temp_max } = data.main;
+    const { temp_min } = data.main;
     const { speed } = data.wind;
 
     temperatureDegree.textContent = temp + '\xB0' + ' C';
@@ -73,11 +72,11 @@ function weatherDataHandler(data) {
     maxTemperature.textContent = 'Max: ' + temp_max + '\xB0' + ' C';
     minTemperature.textContent = 'Min: ' + temp_min + '\xB0' + ' C';
     windSpeed.textContent = 'Wind Speed: ' + speed + ' m/s';
-    setIcon.style["background-image"] = `url(${setIconFunction(icon)})`;
+    setIcon.style["background-image"] = url(${setIconFunction(icon)});
 }
 
-// Set the weather icon based on the condition
 function setIconFunction(icon) {
+
     const icons = {
         "01d": "./animated/day.svg",
         "02d": "./animated/cloudy-day-1.svg",
